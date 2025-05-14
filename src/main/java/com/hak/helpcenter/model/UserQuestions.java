@@ -4,9 +4,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@EqualsAndHashCode(callSuper = true)
+import java.time.LocalDate;
+
 @Entity
 @Data
 @Builder
@@ -16,10 +20,12 @@ public class UserQuestions extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer questionId;
-    private Integer questionCode;
+    private String name;
+    private String email;
+    private LocalDate selectDate;
+    private String topic;
     private String subject;
     private String question;
+    private String status = "PENDING";
     private String answer;
-    private String opinion;
-    private String answerEmail;
 }

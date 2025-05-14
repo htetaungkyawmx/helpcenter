@@ -8,10 +8,11 @@ import lombok.Data;
 @AllArgsConstructor
 @Builder
 public class FrequentQuestionsDto {
-
     private Integer questionId;
     private Integer questionCode;
+    private String category;
     private String question;
     private String answer;
-
+    private Integer viewCount;
+    private Boolean isFeatured;
 }

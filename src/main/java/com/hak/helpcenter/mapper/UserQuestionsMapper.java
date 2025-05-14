@@ -6,32 +6,43 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class UserQuestionsMapper {
-
     public UserQuestions toEntity(UserQuestionsDto dto) {
         return UserQuestions.builder()
                 .questionId(dto.getQuestionId())
-                .questionCode(dto.getQuestionCode())
+                .name(dto.getName())
+                .email(dto.getEmail())
+                .selectDate(dto.getSelectDate())
+                .topic(dto.getTopic())
                 .subject(dto.getSubject())
                 .question(dto.getQuestion())
-                .answerEmail(dto.getAnswerEmail())
+                .status(dto.getStatus())
+                .answer(dto.getAnswer())
                 .build();
     }
 
     public UserQuestionsDto toDto(UserQuestions entity) {
         return UserQuestionsDto.builder()
                 .questionId(entity.getQuestionId())
-                .questionCode(entity.getQuestionCode())
+                .name(entity.getName())
+                .email(entity.getEmail())
+                .selectDate(entity.getSelectDate())
+                .topic(entity.getTopic())
                 .subject(entity.getSubject())
                 .question(entity.getQuestion())
-                .answerEmail(entity.getAnswerEmail())
+                .status(entity.getStatus())
+                .answer(entity.getAnswer())
                 .build();
     }
 
     public UserQuestions updateEntity(UserQuestions entity, UserQuestionsDto dto) {
-        entity.setQuestionCode(dto.getQuestionCode());
+        entity.setName(dto.getName());
+        entity.setEmail(dto.getEmail());
+        entity.setSelectDate(dto.getSelectDate());
+        entity.setTopic(dto.getTopic());
         entity.setSubject(dto.getSubject());
         entity.setQuestion(dto.getQuestion());
-        entity.setAnswerEmail(dto.getAnswerEmail());
+        entity.setStatus(dto.getStatus());
+        entity.setAnswer(dto.getAnswer());
         return entity;
     }
 }

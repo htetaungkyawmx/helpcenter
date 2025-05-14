@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Tag(
         name = "APIs for Help Center",
         description = "REST APIs for managing Help Center content including FAQs and user questions"
@@ -28,6 +30,11 @@ public class HelpCenterController {
     public ResponseEntity<String> createFrequentQuestion(@RequestBody FrequentQuestionsDto frequentQuestionsDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(frequentQuestionsService.createFrequentQuestion(frequentQuestionsDto));
+    }
+
+    @GetMapping("/frequent-questions")
+    public ResponseEntity<List<FrequentQuestionsDto>> getAllFrequentQuestions() {
+        return ResponseEntity.ok(frequentQuestionsService.getAllFrequentQuestions());
     }
 
     @GetMapping("/frequent-questions/{questionId}")
@@ -52,6 +59,11 @@ public class HelpCenterController {
     public ResponseEntity<String> createUserQuestion(@RequestBody UserQuestionsDto userQuestionsDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(userQuestionsService.createUserQuestion(userQuestionsDto));
+    }
+
+    @GetMapping("/user-questions")
+    public ResponseEntity<List<UserQuestionsDto>> getAllUserQuestions() {
+        return ResponseEntity.ok(userQuestionsService.getAllUserQuestions());
     }
 
     @GetMapping("/user-questions/{questionId}")

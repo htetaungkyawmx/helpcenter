@@ -10,6 +10,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -49,5 +52,32 @@ public class FrequentQuestionsServiceImpl implements IFrequentQuestionsService {
         }
         frequentQuestionsRepository.deleteById(questionId);
         return "Frequent question with ID: " + questionId + " deleted successfully.";
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<FrequentQuestionsDto> getAllFrequentQuestions() {
+        List<FrequentQuestions> questions = frequentQuestionsRepository.findAll();
+        return questions.stream()
+                .map(frequentQuestionsMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<FrequentQuestionsDto> getFeaturedFrequentQuestions() {
+        List<FrequentQuestions> questions = frequentQuestionsRepository.findByIsFeaturedTrue();
+        return questions.stream()
+                .map(frequentQuestionsMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<FrequentQuestionsDto> getFrequentQuestionsByCategory(String category) {
+        List<FrequentQuestions> questions = frequentQuestionsRepository.findByCategory(category);
+        return questions.stream()
+                .map(frequentQuestionsMapper::toDto)
+                .collect(Collectors.toList());
     }
 }
