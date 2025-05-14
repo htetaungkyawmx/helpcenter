@@ -7,6 +7,7 @@ import com.hak.helpcenter.repository.FrequentQuestionsRepository;
 import com.hak.helpcenter.service.IFrequentQuestionsService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,9 +24,32 @@ public class FrequentQuestionsServiceImpl implements IFrequentQuestionsService {
 
     @Override
     public String createFrequentQuestion(FrequentQuestionsDto form) {
+        // Ensure the questionId is null to force a new entity creation
+        form.setQuestionId(null); // Reset the ID to ensure a new entity is created
         FrequentQuestions entity = frequentQuestionsMapper.toEntity(form);
-        FrequentQuestions savedEntity = frequentQuestionsRepository.save(entity);
-        return "Frequent question: " + savedEntity.getQuestion() + " saved successfully.";
+
+        // Retry mechanism for optimistic locking
+        int maxRetries = 3;
+        int attempt = 0;
+        while (attempt < maxRetries) {
+            try {
+                FrequentQuestions savedEntity = frequentQuestionsRepository.save(entity);
+                return "Frequent question: " + savedEntity.getQuestion() + " saved successfully.";
+            } catch (ObjectOptimisticLockingFailureException e) {
+                attempt++;
+                if (attempt == maxRetries) {
+                    throw new RuntimeException("Failed to save frequent question after " + maxRetries + " attempts due to concurrent modifications", e);
+                }
+                // Optional: Add a small delay before retrying
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    throw new RuntimeException("Retry interrupted", ie);
+                }
+            }
+        }
+        throw new RuntimeException("Unexpected error while saving frequent question");
     }
 
     @Override
@@ -34,6 +58,7 @@ public class FrequentQuestionsServiceImpl implements IFrequentQuestionsService {
                 .orElseThrow(() -> new EntityNotFoundException("Frequent question not found with id: " + questionId));
 
         frequentQuestionsMapper.updateEntity(existingEntity, form);
+        frequentQuestionsRepository.save(existingEntity); // Ensure the update is saved
         return "Frequent question: " + existingEntity.getQuestion() + " updated successfully.";
     }
 
